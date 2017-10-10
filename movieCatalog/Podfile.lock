@@ -1,0 +1,37 @@
+PODS:
+  - Alamofire (4.5.1)
+  - Cache (4.0.2):
+    - SwiftHash (~> 2.0.0)
+  - Imaginary (3.0.0):
+    - Cache (~> 4.0)
+  - SwiftHash (2.0.0)
+  - SwiftyJSON (4.0.0-alpha.1)
+  - TinyConstraints (3.0.1)
+
+DEPENDENCIES:
+  - Alamofire (~> 4.4)
+  - Cache
+  - Imaginary
+  - SwiftyJSON (from `https://github.com/SwiftyJSON/SwiftyJSON.git`)
+  - TinyConstraints
+
+EXTERNAL SOURCES:
+  SwiftyJSON:
+    :git: https://github.com/SwiftyJSON/SwiftyJSON.git
+
+CHECKOUT OPTIONS:
+  SwiftyJSON:
+    :commit: e1b9090415109b61b6f16b97c75399ed1bec5e62
+    :git: https://github.com/SwiftyJSON/SwiftyJSON.git
+
+SPEC CHECKSUMS:
+  Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
+  Cache: 363b6899cee63c82ccbd291e64a6c202abc17a88
+  Imaginary: 2765d293d425cbed3b07fa11642554cbaebe913d
+  SwiftHash: d2e09b13495447178cdfb8e46e54a5c46f15f5a9
+  SwiftyJSON: c4d27c2ca659d5c91460cd17cc60fd212b26074d
+  TinyConstraints: 77cb4735982941687268bb6f324badd0ae29ad46
+
+PODFILE CHECKSUM: c0d2578d44c24fd1361baef9a58ddfcd649c77f3
+
+COCOAPODS: 1.1.1

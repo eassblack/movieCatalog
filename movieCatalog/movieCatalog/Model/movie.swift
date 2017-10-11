@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import SwiftyJSON
 
+/// Modelo movie para el manejo dentro de la app
 class movie{
     fileprivate var id: Int?
     fileprivate var vote_average: Float?
@@ -22,9 +23,10 @@ class movie{
     fileprivate var runtime: Int?
     fileprivate var video_id: String?
     fileprivate var backdrop_path: String?
+    
     /**
      constructor de la clase movie
-     - parameter data: JSON con toda la inforamcion del comentario.
+     - parameter data: JSON con toda la informacion de la movie.
      */
     init(data: JSON){
         loadMovieData(data: data)
@@ -40,8 +42,8 @@ class movie{
     func getTitle()->String{
         return self.title!
     }
-    func getPoster()->String{
-        return self.poster!
+    func getPoster()->String?{
+        return self.poster != nil ? self.poster : nil
     }
     func getOverview()->String{
         return self.overview!
@@ -61,18 +63,21 @@ class movie{
     func getVideoId()->String?{
         return self.video_id != nil ? self.video_id : nil
     }
-    func getBackdropPath()->String{
-        return self.backdrop_path!
+    func getBackdropPath()->String?{
+        return self.backdrop_path != nil ? self.backdrop_path : nil
     }
     func setPage(page: String) {
         self.page = page
     }
+    
+    ///Setters
     func setRuntime(runtime: Int){
         self.runtime = runtime
     }
     func setVideoId(videoId:String) {
         self.video_id = videoId
     }
+    
     /// Carga de la data
     ///
     /// - Parameter data: JSON data

@@ -10,6 +10,10 @@ import Foundation
 import UIKit
 
 extension UIColor {
+    
+    /// Funcion para crear un UIColor con formato HEX
+    ///
+    /// - Parameter hexString: cod Hex del color
     convenience init(hexString: String) {
         let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int = UInt32()
@@ -30,6 +34,8 @@ extension UIColor {
 }
 
 extension UIView {
+    
+    /// Metodo para obtener el controlador padre de la vista
     var parentViewController: UIViewController? {
         var parentResponder: UIResponder? = self
         while parentResponder != nil {
@@ -39,5 +45,23 @@ extension UIView {
             }
         }
         return nil
+    }
+}
+
+extension String {
+    /// Metodo para realizar una busqueda de un string entro de otro string
+    ///
+    /// - Parameter find: texto a buscar
+    /// - Returns: true- si esta contenido, false- si no esta contenido
+    func contains(_ find: String) -> Bool{
+        return self.range(of: find) != nil
+    }
+    
+    /// Metodo para realizar una busqueda de un string entro de otro string
+    ///
+    /// - Parameter find: texto a buscar
+    /// - Returns: true- si esta contenido, false- si no esta contenido
+    func containsIgnoringCase(_ find: String) -> Bool{
+        return self.range(of: find, options: .caseInsensitive) != nil
     }
 }

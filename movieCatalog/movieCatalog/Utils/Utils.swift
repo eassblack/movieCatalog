@@ -11,25 +11,16 @@ import UIKit
 import Cache
 import Imaginary
 
+///Tama;o de la pantalla en donde se esta ejecutando
 let SCREEN_SIZE: CGRect = UIScreen.main.bounds
+
+///manejador del modelo global
 let GLOBAL_MODEL: modelHandler = modelHandler()
 
+///Configuracion e inicializaion de la cache
 let diskConfig = DiskConfig(name: "local")
 let memoryConfig = MemoryConfig(expiry: .never, countLimit: 500, totalCostLimit: 524288000)
 //Cache global
 let GLOBAL_CACHE = try? Storage(diskConfig: diskConfig, memoryConfig: memoryConfig)
 
-/**
- Funcion que extrae una imagen a partir de un thumbnail.
- */
-func getPoster(newMovie : movie, imageView : UIImageView, type: Int) -> Void {
-    var urlBase : String = "https://image.tmdb.org/t/p/w500"
-    if type == 0 {
-    urlBase += newMovie.getPoster()
-    }else{
-        urlBase += newMovie.getBackdropPath()
-    }
-    let posterMovie = URL(string: urlBase)
-    let placeholder = imageView.image
-    imageView.setImage(url: posterMovie!, placeholder: placeholder)
-}
+

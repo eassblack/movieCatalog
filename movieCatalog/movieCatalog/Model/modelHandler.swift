@@ -7,6 +7,7 @@
 //
 import SwiftyJSON
 
+///Clase encargada del manejo de las movies dentro de la app
 class modelHandler {
     
     // vectores globales para el manejo de la data
@@ -58,5 +59,16 @@ class modelHandler {
             return nil
         }
         return movies[movieIndex!]
+    }
+    
+    /**
+     Funcion para realizar una busqueda dentro de todas las movies de la app
+     
+     - parameter key: **String** de la busqueda
+     
+     - returns: **[movie]**
+     */
+    func searchMovie(key:String)-> [movie]{
+        return self.movies.filter({$0.getTitle().containsIgnoringCase(key)})
     }
 }

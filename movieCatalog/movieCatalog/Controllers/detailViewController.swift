@@ -10,6 +10,7 @@ import UIKit
 import youtube_ios_player_helper
 import SwiftyJSON
 
+//Controlador detalle de pelicula, contiene un scrollView y dentro se visualizan los detalles de la movie. Tambien se puede visualizar el trailes de la pelicula
 class detailViewController: UIViewController {
 
     //Componentes de la inerfaz
@@ -41,12 +42,16 @@ class detailViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    //Metodo que se ejecuta cada vez que la vista va a aparecer en la pantalla
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.tintColor = UIColor.lightGray
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.lightGray]
     }
+    
+    ///Metodo que se encarga de crear y configurar el scrollView y los components para visualizar el detalle de la movie
     func loadComponets(){
         self.mainScroll = UIScrollView(frame: CGRect.zero)
         self.view.addSubview(mainScroll!)
@@ -138,10 +143,12 @@ class detailViewController: UIViewController {
         self.mainScroll?.contentOffset.y = 0.0
     }
 
+    ///Metodo que se encarga de solicitar el datella de la movie y los videos para visualizar el triler
     func getData(){
         //Grupo para manejar las diferentes llamadas asincronas
         let downloadGroup = DispatchGroup()
-        let videoURL = createUrl(type: 3, movieId: self.detailMovie?.getId())
+        
+        let videoURL = createUrl(type: 4, movieId: self.detailMovie?.getId(), searchKey: nil)
         downloadGroup.enter()
         getService(url: videoURL, httpMethod: "GET", data: JSON()) { (data) in
             if data != nil{
@@ -151,9 +158,8 @@ class detailViewController: UIViewController {
             }
             downloadGroup.leave()
         }
-        let movieURL = createUrl(type: 4, movieId: self.detailMovie?.getId())
+        let movieURL = createUrl(type: 5, movieId: self.detailMovie?.getId(), searchKey: nil)
         downloadGroup.enter()
-        print(movieURL)
         getService(url: movieURL, httpMethod: "GET", data: JSON()) { (data) in
             if data != nil{
                 self.detailMovie = GLOBAL_MODEL.findMovie(data: data!)
@@ -164,14 +170,5 @@ class detailViewController: UIViewController {
             self.loadComponets()
         }
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

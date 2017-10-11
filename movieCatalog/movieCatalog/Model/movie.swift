@@ -21,7 +21,7 @@ class movie{
     fileprivate var page: String?
     fileprivate var runtime: Int?
     fileprivate var video_id: String?
-    
+    fileprivate var backdrop_path: String?
     /**
      constructor de la clase movie
      - parameter data: JSON con toda la inforamcion del comentario.
@@ -61,6 +61,9 @@ class movie{
     func getVideoId()->String{
         return self.video_id!
     }
+    func getBackdropPath()->String{
+        return self.backdrop_path!
+    }
     
     /// Carga de la data
     ///
@@ -70,7 +73,7 @@ class movie{
         self.vote_average = data["vote_average"] != JSON.null ? data["vote_average"].float : self.vote_average
         self.title = data["title"] != JSON.null ? data["title"].string : self.title
         self.poster = data["poster_path"] != JSON.null ? data["poster_path"].string : self.poster
-        
+        self.backdrop_path = data["backdrop_path"] != JSON.null ? data["backdrop_path"].string : self.backdrop_path
         self.overview = data["overview"] != JSON.null ? data["overview"].string : self.overview
         self.realease_date = data["realease_date"] != JSON.null ? data["realease_date"].string : self.realease_date
         if data["genres"] != JSON.null{

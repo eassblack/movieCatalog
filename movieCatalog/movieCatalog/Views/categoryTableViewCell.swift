@@ -43,6 +43,7 @@ class categoryTableViewCell: UITableViewCell {
     }
 
     func loadComponents(){
+        self.backgroundColor = UIColor.clear
         self.flowLayout = UICollectionViewFlowLayout()
         self.flowLayout?.itemSize = CGSize(width: 100.0, height: 150.0)
         self.flowLayout?.scrollDirection = .horizontal
@@ -51,6 +52,7 @@ class categoryTableViewCell: UITableViewCell {
         self.flowLayout?.sectionInset = UIEdgeInsets(top: 0.0, left: 5.0, bottom: 0.0, right: 5.0)
         moviesCollection = UICollectionView(frame: CGRect.zero, collectionViewLayout: self.flowLayout!)
         self.addSubview(moviesCollection!)
+        moviesCollection?.backgroundColor = UIColor.clear
         moviesCollection?.edgesToSuperview()
         moviesCollection?.width(SCREEN_SIZE.width)
         moviesCollection?.height(160)
@@ -71,5 +73,9 @@ extension categoryTableViewCell:UICollectionViewDelegate,UICollectionViewDataSou
     }
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let detail = detailViewController(detailMovie: self.categoryMovies[indexPath.row])
+        self.parentViewController?.navigationController?.pushViewController(detail, animated: true)
     }
 }

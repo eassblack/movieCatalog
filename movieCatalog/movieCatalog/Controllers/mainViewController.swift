@@ -29,16 +29,21 @@ class mainViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.barTintColor = UIColor.black
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.lightGray]
+    }
     func loadComponent(){
         self.mainTable = UITableView(frame: CGRect.zero, style: .grouped)
         self.view.addSubview(self.mainTable!)
         self.mainTable?.translatesAutoresizingMaskIntoConstraints = false
         self.mainTable?.edges(to: self.view)
-        self.mainTable?.backgroundColor = UIColor.black
+        self.mainTable?.backgroundColor = UIColor(hexString: "141414")
         self.mainTable!.showsVerticalScrollIndicator = false
         self.mainTable!.allowsSelection = false
-        self.mainTable!.separatorColor = UIColor.gray
+        self.mainTable!.separatorColor = UIColor.clear
         self.mainTable!.delegate = self
         self.mainTable!.dataSource = self
         self.mainTable!.rowHeight = UITableViewAutomaticDimension

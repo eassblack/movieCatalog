@@ -22,9 +22,13 @@ let GLOBAL_CACHE = try? Storage(diskConfig: diskConfig, memoryConfig: memoryConf
 /**
  Funcion que extrae una imagen a partir de un thumbnail.
  */
-func getPoster(newMovie : movie, imageView : UIImageView) -> Void {
+func getPoster(newMovie : movie, imageView : UIImageView, type: Int) -> Void {
     var urlBase : String = "https://image.tmdb.org/t/p/w500"
+    if type == 0 {
     urlBase += newMovie.getPoster()
+    }else{
+        urlBase += newMovie.getBackdropPath()
+    }
     let posterMovie = URL(string: urlBase)
     let placeholder = imageView.image
     imageView.setImage(url: posterMovie!, placeholder: placeholder)

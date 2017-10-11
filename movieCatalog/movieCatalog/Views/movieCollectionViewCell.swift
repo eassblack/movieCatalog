@@ -31,7 +31,7 @@ class movieCollectionViewCell: UICollectionViewCell {
     }
     func setMovie(newMovie: movie){
         self.movie = newMovie
-        getPoster(newMovie: self.movie!, imageView: self.imageMovie!)
+        getPoster(newMovie: self.movie!, imageView: self.imageMovie!,type: 0)
     }
     
 }

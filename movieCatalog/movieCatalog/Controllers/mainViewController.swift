@@ -31,7 +31,7 @@ class mainViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barTintColor = UIColor.black
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.lightGray]
     }
@@ -58,33 +58,39 @@ class mainViewController: UIViewController {
         
         let pupularURL = createUrl(type: 0, movieId: nil)
         getService(url: pupularURL, httpMethod: "GET", data: JSON()) { (data) in
-            for item in data["results"].arrayValue{
+            if data != nil{
+            for item in (data?["results"].arrayValue)!{
                 let newMovie = GLOBAL_MODEL.findMovie(data: item)
                 if !self.moviesPopular.contains(where:{$0.getId() == newMovie.getId()}){
                     self.moviesPopular.append(newMovie)
                 }
             }
             self.mainTable?.reloadSections(IndexSet(integer: 0), with: .none)
+            }
         }
         let topRatedURL = createUrl(type: 1, movieId: nil)
         getService(url: topRatedURL, httpMethod: "GET", data: JSON()) { (data) in
-            for item in data["results"].arrayValue{
+            if data != nil{
+            for item in (data?["results"].arrayValue)!{
                 let newMovie = GLOBAL_MODEL.findMovie(data: item)
                 if !self.moviesTopRated.contains(where:{$0.getId() == newMovie.getId()}){
                     self.moviesTopRated.append(newMovie)
                 }
             }
             self.mainTable?.reloadSections(IndexSet(integer: 1), with: .none)
+            }
         }
         let upcomingURL = createUrl(type: 2, movieId: nil)
         getService(url: upcomingURL, httpMethod: "GET", data: JSON()) { (data) in
-            for item in data["results"].arrayValue{
+            if data != nil{
+                for item in (data?["results"].arrayValue)!{
                 let newMovie = GLOBAL_MODEL.findMovie(data: item)
                 if !self.moviesUpcoming.contains(where:{$0.getId() == newMovie.getId()}){
                     self.moviesUpcoming.append(newMovie)
                 }
             }
             self.mainTable?.reloadSections(IndexSet(integer: 2), with: .none)
+            }
         }
     }
     

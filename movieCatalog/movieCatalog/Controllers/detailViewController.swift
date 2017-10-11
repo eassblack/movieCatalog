@@ -7,19 +7,25 @@
 //
 
 import UIKit
+import youtube_ios_player_helper
+import SwiftyJSON
 
 class detailViewController: UIViewController {
 
+    //Componentes de la inerfaz
     fileprivate var mainScroll: UIScrollView?
     fileprivate var headerImage : UIImageView?
     fileprivate var titleLabel : UILabel?
     fileprivate var descriptionLabel : UILabel?
+    fileprivate var moreInfoLabel : UILabel?
+    fileprivate var videoPlayer : YTPlayerView?
     
+    //Data source
     fileprivate var detailMovie : movie?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.loadComponets()
+        self.getData()
         // Do any additional setup after loading the view.
     }
 
@@ -37,7 +43,7 @@ class detailViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.tintColor = UIColor.lightGray
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.lightGray]
     }
@@ -67,10 +73,11 @@ class detailViewController: UIViewController {
         self.titleLabel?.textColor = UIColor.white
         self.titleLabel?.font = UIFont.boldSystemFont(ofSize: 24.0)
         self.titleLabel?.height((self.titleLabel?.font.lineHeight)!)
+        
         self.descriptionLabel = UILabel()
         self.mainScroll?.addSubview(descriptionLabel!)
         self.descriptionLabel?.left(to: self.mainScroll!, nil, offset: 20.0, relation: .equal, priority: .required, isActive: true)
-        self.descriptionLabel?.topToBottom(of: self.titleLabel!)
+        self.descriptionLabel?.topToBottom(of: self.titleLabel!, offset: 10.0, relation: .equal, priority: .required, isActive: true)
         self.descriptionLabel?.width(SCREEN_SIZE.width - 40.0)
         self.descriptionLabel?.height(20.0, relation: .equalOrGreater, priority: .required, isActive: true)
         self.descriptionLabel?.lineBreakMode = .byTruncatingTail
@@ -78,9 +85,85 @@ class detailViewController: UIViewController {
         self.descriptionLabel?.text = self.detailMovie?.getOverview()
         self.descriptionLabel?.textColor = UIColor.lightGray
         self.descriptionLabel?.font = UIFont.systemFont(ofSize: 14.0)
-        self.descriptionLabel?.bottom(to: self.mainScroll!, nil, offset: 20.0, relation: .equal, priority: .required, isActive: true)
+        
+        self.moreInfoLabel = UILabel()
+        self.mainScroll?.addSubview(moreInfoLabel!)
+        self.moreInfoLabel?.topToBottom(of: self.descriptionLabel!, offset: 10.0, relation: .equal, priority: .required, isActive: true)
+        self.moreInfoLabel?.left(to: self.mainScroll!, nil, offset: 20.0, relation: .equal, priority: .required, isActive: true)
+        self.moreInfoLabel?.width(SCREEN_SIZE.width - 40.0)
+        self.moreInfoLabel?.height(20.0, relation: .equalOrGreater, priority: .required, isActive: true)
+        self.moreInfoLabel?.lineBreakMode = .byTruncatingTail
+        self.moreInfoLabel?.numberOfLines = 100
+        self.moreInfoLabel?.textColor = UIColor.white
+        self.moreInfoLabel?.font = UIFont.systemFont(ofSize: 10.0)
+        var moreInfoText: String = "Release Date: " + (self.detailMovie?.getReleaseDate())! + " \n"
+        if (self.detailMovie?.getGenres().count)! > 0 {
+            moreInfoText += "Genres: "
+            for item in (self.detailMovie?.getGenres())!{
+                moreInfoText += item + " "
+            }
+            moreInfoText += " \n"
+        }
+        moreInfoText += "Vote Average: " + (self.detailMovie?.getVoteAverage().description)! + " \n"
+        if self.detailMovie?.getRuntime() != nil{
+            moreInfoText += "Runtime: " + (self.detailMovie?.getRuntime()?.description)! + "m \n"
+        }
+        if self.detailMovie?.getPage() != nil{
+        moreInfoText += "Web Site: " + (self.detailMovie?.getPage())! + " \n"
+        }
+        self.moreInfoLabel?.text = moreInfoText
+        if self.detailMovie?.getVideoId() != nil {
+        self.videoPlayer = YTPlayerView(frame: CGRect.zero)
+            self.videoPlayer?.load(withVideoId: (self.detailMovie?.getVideoId())!, playerVars: [
+            "autoplay":1 , "playsinline":1 ,"controls" : 1 ,"loop":1 , "rel":0 , "showinfo":0  ,"fs":0 ,"disablekb":1 ])
+        self.mainScroll?.addSubview(videoPlayer!)
+            self.videoPlayer?.topToBottom(of: self.moreInfoLabel!, offset: 10.0, relation: .equal, priority: .required, isActive: true)
+            self.videoPlayer?.left(to: self.mainScroll!, nil, offset: 20.0, relation: .equal, priority: .required, isActive: true)
+            self.videoPlayer?.width(SCREEN_SIZE.width - 40.0)
+            self.videoPlayer?.height(200.0)
+            self.videoPlayer?.contentMode = .scaleAspectFill
+            self.videoPlayer?.bottom(to: self.mainScroll!, nil, offset: 20.0, relation: .equal, priority: .required, isActive: true)
+            
+            self.mainScroll?.contentSize = CGSize(width: SCREEN_SIZE.width, height: (self.videoPlayer?.frame.maxY)! + 20.0)
+            self.mainScroll?.setContentOffset(CGPoint(x: 0.0, y: 0.0), animated: false)
+            self.mainScroll?.contentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 20.0, right: 0.0)
+            
+        }else{
+        self.moreInfoLabel?.bottom(to: self.mainScroll!, nil, offset: 20.0, relation: .equal, priority: .required, isActive: true)
+            self.mainScroll?.contentSize = CGSize(width: SCREEN_SIZE.width, height: (self.moreInfoLabel?.frame.maxY)! + 20.0)
+            self.mainScroll?.setContentOffset(CGPoint(x: 0.0, y: 0.0), animated: false)
+            self.mainScroll?.contentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 20.0, right: 0.0)
+            
+        }
+        self.mainScroll?.contentOffset.y = 0.0
     }
 
+    func getData(){
+        //Grupo para manejar las diferentes llamadas asincronas
+        let downloadGroup = DispatchGroup()
+        let videoURL = createUrl(type: 3, movieId: self.detailMovie?.getId())
+        downloadGroup.enter()
+        getService(url: videoURL, httpMethod: "GET", data: JSON()) { (data) in
+            if data != nil{
+                if (data?["results"].arrayValue.count)! > 0{
+                self.detailMovie?.setVideoId(videoId: (data?["results"][0]["key"].string)!)
+                }
+            }
+            downloadGroup.leave()
+        }
+        let movieURL = createUrl(type: 4, movieId: self.detailMovie?.getId())
+        downloadGroup.enter()
+        print(movieURL)
+        getService(url: movieURL, httpMethod: "GET", data: JSON()) { (data) in
+            if data != nil{
+                self.detailMovie = GLOBAL_MODEL.findMovie(data: data!)
+            }
+            downloadGroup.leave()
+        }
+        downloadGroup.notify(queue: DispatchQueue.main) {
+            self.loadComponets()
+        }
+    }
     /*
     // MARK: - Navigation
 

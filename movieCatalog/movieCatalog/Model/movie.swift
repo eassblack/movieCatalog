@@ -16,7 +16,7 @@ class movie{
     fileprivate var title: String?
     fileprivate var poster: String?
     fileprivate var overview: String?
-    fileprivate var realease_date: String?
+    fileprivate var release_date: String?
     fileprivate var genres: [String] = []
     fileprivate var page: String?
     fileprivate var runtime: Int?
@@ -47,24 +47,32 @@ class movie{
         return self.overview!
     }
     func getReleaseDate()->String{
-        return self.realease_date!
+        return self.release_date!
     }
     func getGenres()->[String]{
         return self.genres
     }
-    func getPage()->String{
-        return self.page!
+    func getPage()->String?{
+        return self.page != nil ? self.page : nil
     }
-    func getRuntime()->Int{
-        return self.runtime!
+    func getRuntime()->Int?{
+        return self.runtime != nil ? self.runtime : nil
     }
-    func getVideoId()->String{
-        return self.video_id!
+    func getVideoId()->String?{
+        return self.video_id != nil ? self.video_id : nil
     }
     func getBackdropPath()->String{
         return self.backdrop_path!
     }
-    
+    func setPage(page: String) {
+        self.page = page
+    }
+    func setRuntime(runtime: Int){
+        self.runtime = runtime
+    }
+    func setVideoId(videoId:String) {
+        self.video_id = videoId
+    }
     /// Carga de la data
     ///
     /// - Parameter data: JSON data
@@ -75,10 +83,12 @@ class movie{
         self.poster = data["poster_path"] != JSON.null ? data["poster_path"].string : self.poster
         self.backdrop_path = data["backdrop_path"] != JSON.null ? data["backdrop_path"].string : self.backdrop_path
         self.overview = data["overview"] != JSON.null ? data["overview"].string : self.overview
-        self.realease_date = data["realease_date"] != JSON.null ? data["realease_date"].string : self.realease_date
+        self.release_date = data["release_date"] != JSON.null ? data["release_date"].string : self.release_date
         if data["genres"] != JSON.null{
         for item in data["genres"].arrayValue{
-            self.genres.append(item.string!)
+            if item["name"] != JSON.null{
+               self.genres.append(item["name"].string!)
+            }
         }
         }
         self.page = data["page"] != JSON.null ? data["page"].string : self.page

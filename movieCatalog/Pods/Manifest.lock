@@ -7,6 +7,7 @@ PODS:
   - SwiftHash (2.0.0)
   - SwiftyJSON (4.0.0-alpha.1)
   - TinyConstraints (3.0.1)
+  - youtube-ios-player-helper (0.1.6)
 
 DEPENDENCIES:
   - Alamofire (~> 4.4)
@@ -14,6 +15,7 @@ DEPENDENCIES:
   - Imaginary
   - SwiftyJSON (from `https://github.com/SwiftyJSON/SwiftyJSON.git`)
   - TinyConstraints
+  - youtube-ios-player-helper
 
 EXTERNAL SOURCES:
   SwiftyJSON:
@@ -31,7 +33,8 @@ SPEC CHECKSUMS:
   SwiftHash: d2e09b13495447178cdfb8e46e54a5c46f15f5a9
   SwiftyJSON: c4d27c2ca659d5c91460cd17cc60fd212b26074d
   TinyConstraints: 77cb4735982941687268bb6f324badd0ae29ad46
+  youtube-ios-player-helper: 21ab92db027c7ff86cb17a3843a3f6eafc8158d2
 
-PODFILE CHECKSUM: c0d2578d44c24fd1361baef9a58ddfcd649c77f3
+PODFILE CHECKSUM: 67455127ad7f626fc3265b067c37dc647c0eb436
 
 COCOAPODS: 1.1.1

@@ -22,14 +22,12 @@ func createUrl(type: Int,movieId: Int?)->String{
     case 2:
         urlBase += "upcoming"
     case 3:
-        if movieId != nil{
-            urlBase += String(describing: movieId)
-        }
-        urlBase += "/videos"
+            let id : Int = movieId!
+            let idString : String = "\(id)"
+                urlBase += idString
+            urlBase += "/videos"
     case 4:
-        if movieId != nil{
-            urlBase += String(describing: movieId)
-        }
+            urlBase += "\(movieId!)"
     default:
         print("type not handle")
     }
@@ -40,7 +38,7 @@ func createUrl(type: Int,movieId: Int?)->String{
     return urlBase
 }
 
-func getService(url: String ,httpMethod:String, data : JSON,callback: @escaping  (JSON) -> Void){
+func getService(url: String ,httpMethod:String, data : JSON,callback: @escaping  (JSON?) -> Void){
     let urlRequest = URL(string: url)
     var request = URLRequest(url: urlRequest!)
     request.httpMethod = httpMethod
@@ -54,6 +52,7 @@ func getService(url: String ,httpMethod:String, data : JSON,callback: @escaping 
             switch response.result {
             case .failure(_):
                 print("Error handle")
+                callback(nil)
             case .success(let responseObject):
                 let json = JSON(responseObject)
                 callback(json)

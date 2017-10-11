@@ -52,7 +52,7 @@ class modelHandler {
      
      - returns: **movie**
      */
-    func getUser(movieId : Int)-> movie? {
+    func getMovie(movieId : Int)-> movie? {
         let movieIndex = movies.index(where: { $0.getId() == movieId })
         if movieIndex == nil {
             return nil

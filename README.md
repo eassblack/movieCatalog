@@ -28,6 +28,15 @@ Grupo Utils: agrupa las diferentes clases auxiliares donde estan variables globa
 	-Networking: metodos para realizar peticiones a la API TMDB y para descargar las diferentes imagenes.
 	
 	-extencions: metodos auxiliares que extieneden la funcionalidad de diferentes componentes. lo cual ahora repetir el mismo codigo en diferentes partes.
+	
+Librerias CocoaPod usadas:
+
+- TinyConstraints: Libreria que facilita el uso de los UILayoutConstraint con formatos cortos y de facil lectura.
+- SwiftyJSON: Libreria para el manejo de la data en Formato JSON retornado por la API REST de TMDB.
+- Alamofire: Libreria para las paticiones a los diferentes EndPoints de la API TMDB.
+- Cache: Libreria para el manejo de cache.
+- Imaginary: Libreria para la descarga de las diferentes imagenes de la app. y se integra con la cache.
+- youtube-ios-player-helper: Libreria para la visualizacion de video de Youtube. utilizada para los trilers de las peliculas.
 
 Pregunta 1: En que consiste el principio de reponsabilidad unica? Cual es su proposito?
 

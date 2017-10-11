@@ -69,7 +69,7 @@ class movie{
         self.id = data["id"] != JSON.null ? data["id"].int : self.id
         self.vote_average = data["vote_average"] != JSON.null ? data["vote_average"].float : self.vote_average
         self.title = data["title"] != JSON.null ? data["title"].string : self.title
-        self.poster = data["poster"] != JSON.null ? data["poster"].string : self.poster
+        self.poster = data["poster_path"] != JSON.null ? data["poster_path"].string : self.poster
         
         self.overview = data["overview"] != JSON.null ? data["overview"].string : self.overview
         self.realease_date = data["realease_date"] != JSON.null ? data["realease_date"].string : self.realease_date

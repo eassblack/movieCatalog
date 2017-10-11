@@ -10,7 +10,7 @@ import UIKit
 
 class movieCollectionViewCell: UICollectionViewCell {
     fileprivate var imageMovie: UIImageView?
-    //fileprivate var movie : movie?
+    fileprivate var movie : movie?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -25,8 +25,13 @@ class movieCollectionViewCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func setMovie(/*newMovie: moviep*/){
-        //self.movie = movie
+    override func prepareForReuse() {
+        self.movie = nil
+        self.imageMovie?.image = nil
     }
+    func setMovie(newMovie: movie){
+        self.movie = newMovie
+        getPoster(newMovie: self.movie!, imageView: self.imageMovie!)
+    }
+    
 }

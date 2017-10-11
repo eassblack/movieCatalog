@@ -15,14 +15,14 @@ class categoryTableViewCell: UITableViewCell {
     
     
     /// DataSource
-    fileprivate var categoryMovies : [String] = []
+    fileprivate var categoryMovies : [movie] = []
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         loadComponents()
     }
     
-    func setMovies(categoryMovies: [String]){
+    func setMovies(categoryMovies: [movie]){
         self.categoryMovies = categoryMovies
         self.moviesCollection?.reloadData()
     }
@@ -63,11 +63,11 @@ class categoryTableViewCell: UITableViewCell {
 extension categoryTableViewCell:UICollectionViewDelegate,UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(movieCollectionViewCell.self), for: indexPath) as! movieCollectionViewCell
-        cell.setMovie()
+        cell.setMovie(newMovie: self.categoryMovies[indexPath.item])
         return cell
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 7
+        return self.categoryMovies.count
     }
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1

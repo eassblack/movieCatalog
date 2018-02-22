@@ -190,9 +190,11 @@ extension mainViewController : UISearchControllerDelegate, UISearchBarDelegate, 
     ///Metodo que se ejecuta cuando se cancela la busqueda
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         self.dismiss(animated: true) {
-            self.searchActive = false
-            self.isOnlineSearch = false
+            if self.isOnlineSearch || self.searchActive{
+                self.searchActive = false
+                self.isOnlineSearch = false
             self.mainTable?.reloadData()
+            }
         }
     }
     

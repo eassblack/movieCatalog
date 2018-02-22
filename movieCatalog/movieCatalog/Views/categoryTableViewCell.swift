@@ -118,7 +118,6 @@ extension categoryTableViewCell:UICollectionViewDelegate,UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detail = detailViewController(detailMovie: self.categoryMovies[indexPath.row])
         if self.parentViewController is mainViewController{
-        (self.parentViewController as! mainViewController).getSearchBar().isHidden = true
         }
         self.parentViewController?.navigationController?.pushViewController(detail, animated: true)
     }

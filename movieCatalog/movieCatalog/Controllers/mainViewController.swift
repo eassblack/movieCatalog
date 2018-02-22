@@ -35,12 +35,12 @@ class mainViewController: UIViewController {
         super.viewDidLoad()
         self.loadComponent()
         self.title = "Movies Catalog"
-        // Do any additional setup after loading the view.
+        self.navigationController?.delegate = self
+        self.definesPresentationContext = true
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     //Metodo que se ejecuta cada vez que la vista va a aparecer en la pantalla
@@ -49,7 +49,7 @@ class mainViewController: UIViewController {
         self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barTintColor = UIColor.black
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.lightGray]
-        self.searchView.searchBar.isHidden = false
+        //self.searchView.searchBar.isHidden = false
     }
     
     ///Metodo para crear la barra de busqueda
@@ -238,5 +238,19 @@ extension mainViewController : UISearchControllerDelegate, UISearchBarDelegate, 
             self.mainTable?.reloadData()
         }
         searchView.searchBar.resignFirstResponder()
+    }
+}
+
+extension mainViewController : UINavigationControllerDelegate{
+    func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationControllerOperation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        switch operation {
+        case .pop:
+            //thumbnailZoomTransitionAnimator?.operation = operation
+            return popAnimation()
+        case .push:
+            return pushAnimation()
+        case .none:
+            return nil
+        }
     }
 }

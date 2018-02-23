@@ -25,6 +25,8 @@
 		594919A21F8D84EB00EC0779 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594919A11F8D84EB00EC0779 /* Networking.swift */; };
 		59F1DA6B1F8DCA4900FADBDF /* extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F1DA6A1F8DCA4900FADBDF /* extensions.swift */; };
 		59F1DA6D1F8DCC2B00FADBDF /* detailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F1DA6C1F8DCC2B00FADBDF /* detailViewController.swift */; };
+		59FBAB1B2040B59B00F09C6D /* swipeInteractionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FBAB1A2040B59B00F09C6D /* swipeInteractionController.swift */; };
+		59FBAB1D2040BC1700F09C6D /* popBackAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FBAB1C2040BC1700F09C6D /* popBackAnimation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +51,8 @@
 		594919A11F8D84EB00EC0779 /* Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
 		59F1DA6A1F8DCA4900FADBDF /* extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
 		59F1DA6C1F8DCC2B00FADBDF /* detailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = detailViewController.swift; sourceTree = "<group>"; };
+		59FBAB1A2040B59B00F09C6D /* swipeInteractionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swipeInteractionController.swift; sourceTree = "<group>"; };
+		59FBAB1C2040BC1700F09C6D /* popBackAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = popBackAnimation.swift; sourceTree = "<group>"; };
 		8D7796D8CC65A1C350246C0E /* Pods_movieCatalog.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_movieCatalog.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -78,6 +82,8 @@
 			children = (
 				59054548203E75A900E258B1 /* popAnimation.swift */,
 				59054547203E75A800E258B1 /* pushAnimation.swift */,
+				59FBAB1A2040B59B00F09C6D /* swipeInteractionController.swift */,
+				59FBAB1C2040BC1700F09C6D /* popBackAnimation.swift */,
 			);
 			path = Animations;
 			sourceTree = "<group>";
@@ -288,11 +294,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				594919971F8D213200EC0779 /* Utils.swift in Sources */,
+				59FBAB1D2040BC1700F09C6D /* popBackAnimation.swift in Sources */,
 				594919A21F8D84EB00EC0779 /* Networking.swift in Sources */,
 				594919821F8D015200EC0779 /* movieCatalog.xcdatamodeld in Sources */,
 				59F1DA6B1F8DCA4900FADBDF /* extensions.swift in Sources */,
 				5949197C1F8D015200EC0779 /* ViewController.swift in Sources */,
 				5905454A203E75A900E258B1 /* popAnimation.swift in Sources */,
+				59FBAB1B2040B59B00F09C6D /* swipeInteractionController.swift in Sources */,
 				59054549203E75A900E258B1 /* pushAnimation.swift in Sources */,
 				5949197A1F8D015200EC0779 /* AppDelegate.swift in Sources */,
 				5949199B1F8D3C1A00EC0779 /* categoryTableViewCell.swift in Sources */,

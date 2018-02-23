@@ -16,6 +16,7 @@ class mainViewController: UIViewController {
     ///Componentes
     fileprivate var mainTable : UITableView?
     fileprivate var searchView:UISearchController = UISearchController(searchResultsController: nil)
+    fileprivate var refreshControl: UIRefreshControl = UIRefreshControl()
     
     ///Data Source
     fileprivate var seccionTitles: [String] = ["Popular","Top Rated","Upcoming"]
@@ -30,6 +31,10 @@ class mainViewController: UIViewController {
     //Variables de control
     fileprivate var searchActive : Bool = false
     fileprivate var isOnlineSearch: Bool = false
+    fileprivate var isFirstLoad: Bool = true
+    
+    //Transitions
+    private var swipeInteractor : swipeInteractionController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,6 +42,7 @@ class mainViewController: UIViewController {
         self.title = "Movies Catalog"
         self.navigationController?.delegate = self
         self.definesPresentationContext = true
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -49,7 +55,6 @@ class mainViewController: UIViewController {
         self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barTintColor = UIColor.black
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.lightGray]
-        //self.searchView.searchBar.isHidden = false
     }
     
     ///Metodo para crear la barra de busqueda
@@ -57,13 +62,11 @@ class mainViewController: UIViewController {
         self.searchView.searchResultsUpdater = self
         self.searchView.delegate = self
         self.searchView.searchBar.delegate = self
-        
         self.searchView.hidesNavigationBarDuringPresentation = false
-        self.searchView.dimsBackgroundDuringPresentation = true
+        self.searchView.dimsBackgroundDuringPresentation = false
         self.searchView.obscuresBackgroundDuringPresentation = false
         searchView.searchBar.placeholder = "Search for movies"
         searchView.searchBar.sizeToFit()
-        searchView.searchBar.becomeFirstResponder()
         searchView.searchBar.barStyle = .blackTranslucent
         self.mainTable?.tableHeaderView = searchView.searchBar
     }
@@ -90,10 +93,19 @@ class mainViewController: UIViewController {
         }
         self.mainTable!.register(categoryTableViewCell.self, forCellReuseIdentifier: "search")
         self.getFistData()
+        self.refreshControl.addTarget(self, action: #selector(self.refreshTable(sender:)), for: .valueChanged)
+        if #available(iOS 10.0, *) {
+            self.mainTable!.refreshControl = self.refreshControl
+        } else {
+            self.mainTable!.addSubview(self.refreshControl)
+        }
     }
     
     ///Metodo para obtener la data de cada una de las categorias
     func getFistData(){
+        //Grupo para manejar las diferentes llamadas asincronas
+        let downloadGroup = DispatchGroup()
+        downloadGroup.enter()
         let pupularURL = createUrl(type: 0, movieId: nil, searchKey: nil)
         getService(url: pupularURL, httpMethod: "GET", data: JSON()) { (data) in
             if data != nil{
@@ -103,9 +115,10 @@ class mainViewController: UIViewController {
                         self.moviesPopular.append(newMovie)
                     }
                 }
-                self.mainTable?.reloadSections(IndexSet(integer: 0), with: .none)
             }
+            downloadGroup.leave()
         }
+        downloadGroup.enter()
         let topRatedURL = createUrl(type: 1, movieId: nil, searchKey: nil)
         getService(url: topRatedURL, httpMethod: "GET", data: JSON()) { (data) in
             if data != nil{
@@ -115,9 +128,10 @@ class mainViewController: UIViewController {
                         self.moviesTopRated.append(newMovie)
                     }
                 }
-                self.mainTable?.reloadSections(IndexSet(integer: 1), with: .none)
             }
+            downloadGroup.leave()
         }
+        downloadGroup.enter()
         let upcomingURL = createUrl(type: 2, movieId: nil, searchKey: nil)
         getService(url: upcomingURL, httpMethod: "GET", data: JSON()) { (data) in
             if data != nil{
@@ -127,10 +141,20 @@ class mainViewController: UIViewController {
                         self.moviesUpcoming.append(newMovie)
                     }
                 }
-                self.mainTable?.reloadSections(IndexSet(integer: 2), with: .none)
             }
+            downloadGroup.leave()
+        }
+        downloadGroup.notify(queue: DispatchQueue.main) {
+                self.mainTable?.reloadData()
+                self.refreshControl.endRefreshing()
         }
     }
+    
+    //Metodo para actualizar la vista
+    @objc func refreshTable(sender:AnyObject) {
+            self.getFistData()
+    }
+    
     //Metodo para obtener la barra de busqueda
     func getSearchBar()->UISearchBar{
         return self.searchView.searchBar
@@ -242,12 +266,19 @@ extension mainViewController : UISearchControllerDelegate, UISearchBarDelegate, 
 }
 
 extension mainViewController : UINavigationControllerDelegate{
+    
+    func navigationController(_ navigationController: UINavigationController, interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        guard let si = swipeInteractor else { return nil }
+        return si.transitionInProgress ? swipeInteractor : nil
+    }
+    
     func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationControllerOperation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         switch operation {
         case .pop:
-            //thumbnailZoomTransitionAnimator?.operation = operation
-            return popAnimation()
+            guard let si = swipeInteractor else { return nil }
+            return si.transitionInProgress ? popBackAnimation() : popAnimation()
         case .push:
+            self.swipeInteractor = swipeInteractionController(attachTo: toVC)
             return pushAnimation()
         case .none:
             return nil

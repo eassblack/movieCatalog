@@ -12,7 +12,7 @@ import SwiftyJSON
 
 /// Modelo movie para el manejo dentro de la app
 class movie{
-    fileprivate var id: Int?
+    var id: Int!
     fileprivate var vote_average: Float?
     fileprivate var title: String?
     fileprivate var poster: String?
@@ -99,5 +99,12 @@ class movie{
         self.page = data["page"] != JSON.null ? data["page"].string : self.page
         self.runtime = data["runtime"] != JSON.null ? data["runtime"].int : self.runtime
         self.video_id = data["video_id"] != JSON.null ? data["video_id"].string : self.video_id
+    }
+}
+
+extension movie: Equatable {
+    ///Funcion para poder comparar objetos de tipo movie
+    static func == (lhs: movie, rhs: movie) -> Bool {
+        return lhs.id == rhs.id
     }
 }

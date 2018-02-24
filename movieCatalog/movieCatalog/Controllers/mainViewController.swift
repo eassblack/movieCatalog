@@ -9,6 +9,7 @@
 import UIKit
 import TinyConstraints
 import SwiftyJSON
+import Alamofire
 
 //Controlador principal, contiene un tableView con cada una de las categorias y sus respectivas movies. contiene la barra de busqueda.
 class mainViewController: UIViewController {
@@ -16,6 +17,7 @@ class mainViewController: UIViewController {
     ///Componentes
     fileprivate var mainTable : UITableView?
     fileprivate var searchView:UISearchController = UISearchController(searchResultsController: nil)
+    fileprivate var refreshControl: UIRefreshControl = UIRefreshControl()
     
     ///Data Source
     fileprivate var seccionTitles: [String] = ["Popular","Top Rated","Upcoming"]
@@ -30,17 +32,22 @@ class mainViewController: UIViewController {
     //Variables de control
     fileprivate var searchActive : Bool = false
     fileprivate var isOnlineSearch: Bool = false
+    fileprivate var isFirstLoad: Bool = true
+    
+    //Transitions
+    private var swipeInteractor : swipeInteractionController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.loadComponent()
         self.title = "Movies Catalog"
-        // Do any additional setup after loading the view.
+        self.navigationController?.delegate = self
+        self.definesPresentationContext = true
+        
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     //Metodo que se ejecuta cada vez que la vista va a aparecer en la pantalla
@@ -49,7 +56,6 @@ class mainViewController: UIViewController {
         self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.navigationBar.barTintColor = UIColor.black
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.lightGray]
-        self.searchView.searchBar.isHidden = false
     }
     
     ///Metodo para crear la barra de busqueda
@@ -57,13 +63,11 @@ class mainViewController: UIViewController {
         self.searchView.searchResultsUpdater = self
         self.searchView.delegate = self
         self.searchView.searchBar.delegate = self
-        
         self.searchView.hidesNavigationBarDuringPresentation = false
-        self.searchView.dimsBackgroundDuringPresentation = true
+        self.searchView.dimsBackgroundDuringPresentation = false
         self.searchView.obscuresBackgroundDuringPresentation = false
         searchView.searchBar.placeholder = "Search for movies"
         searchView.searchBar.sizeToFit()
-        searchView.searchBar.becomeFirstResponder()
         searchView.searchBar.barStyle = .blackTranslucent
         self.mainTable?.tableHeaderView = searchView.searchBar
     }
@@ -90,47 +94,70 @@ class mainViewController: UIViewController {
         }
         self.mainTable!.register(categoryTableViewCell.self, forCellReuseIdentifier: "search")
         self.getFistData()
+        self.refreshControl.addTarget(self, action: #selector(self.refreshTable(sender:)), for: .valueChanged)
+        if #available(iOS 10.0, *) {
+            self.mainTable!.refreshControl = self.refreshControl
+        } else {
+            self.mainTable!.addSubview(self.refreshControl)
+        }
     }
     
     ///Metodo para obtener la data de cada una de las categorias
     func getFistData(){
+        //Grupo para manejar las diferentes llamadas asincronas
+        let downloadGroup = DispatchGroup()
+        downloadGroup.enter()
         let pupularURL = createUrl(type: 0, movieId: nil, searchKey: nil)
         getService(url: pupularURL, httpMethod: "GET", data: JSON()) { (data) in
             if data != nil{
-            for item in (data?["results"].arrayValue)!{
-                let newMovie = GLOBAL_MODEL.findMovie(data: item)
-                if !self.moviesPopular.contains(where:{$0.getId() == newMovie.getId()}){
-                    self.moviesPopular.append(newMovie)
+                for item in (data?["results"].arrayValue)!{
+                    let newMovie = GLOBAL_MODEL.findMovie(data: item)
+                    if !self.moviesPopular.contains(where:{$0.getId() == newMovie.getId()}){
+                        self.moviesPopular.append(newMovie)
+                    }
                 }
             }
-            self.mainTable?.reloadSections(IndexSet(integer: 0), with: .none)
-            }
+            self.mainTable?.reloadSections(IndexSet(integer: 0) , with: .none)
+            downloadGroup.leave()
         }
+        downloadGroup.enter()
         let topRatedURL = createUrl(type: 1, movieId: nil, searchKey: nil)
         getService(url: topRatedURL, httpMethod: "GET", data: JSON()) { (data) in
             if data != nil{
-            for item in (data?["results"].arrayValue)!{
-                let newMovie = GLOBAL_MODEL.findMovie(data: item)
-                if !self.moviesTopRated.contains(where:{$0.getId() == newMovie.getId()}){
-                    self.moviesTopRated.append(newMovie)
+                for item in (data?["results"].arrayValue)!{
+                    let newMovie = GLOBAL_MODEL.findMovie(data: item)
+                    if !self.moviesTopRated.contains(where:{$0.getId() == newMovie.getId()}){
+                        self.moviesTopRated.append(newMovie)
+                    }
                 }
             }
-            self.mainTable?.reloadSections(IndexSet(integer: 1), with: .none)
-            }
+            self.mainTable?.reloadSections(IndexSet(integer: 1) , with: .none)
+            downloadGroup.leave()
         }
+        downloadGroup.enter()
         let upcomingURL = createUrl(type: 2, movieId: nil, searchKey: nil)
         getService(url: upcomingURL, httpMethod: "GET", data: JSON()) { (data) in
             if data != nil{
                 for item in (data?["results"].arrayValue)!{
-                let newMovie = GLOBAL_MODEL.findMovie(data: item)
-                if !self.moviesUpcoming.contains(where:{$0.getId() == newMovie.getId()}){
-                    self.moviesUpcoming.append(newMovie)
+                    let newMovie = GLOBAL_MODEL.findMovie(data: item)
+                    if !self.moviesUpcoming.contains(where:{$0.getId() == newMovie.getId()}){
+                        self.moviesUpcoming.append(newMovie)
+                    }
                 }
             }
-            self.mainTable?.reloadSections(IndexSet(integer: 2), with: .none)
-            }
+            self.mainTable?.reloadSections(IndexSet(integer: 2) , with: .none)
+            downloadGroup.leave()
+        }
+        downloadGroup.notify(queue: DispatchQueue.main) {
+            self.refreshControl.endRefreshing()
         }
     }
+    
+    //Metodo para actualizar la vista
+    @objc func refreshTable(sender:AnyObject) {
+        self.getFistData()
+    }
+    
     //Metodo para obtener la barra de busqueda
     func getSearchBar()->UISearchBar{
         return self.searchView.searchBar
@@ -159,23 +186,23 @@ extension mainViewController : UITableViewDataSource , UITableViewDelegate{
         }else{
             //Caso contrario se cargan las categorias
             tableView.isScrollEnabled = true
-        switch indexPath.section {
-        case 0:
-            let cell = tableView.dequeueReusableCell(withIdentifier: seccionTitles[0]) as! categoryTableViewCell
-            cell.setMovies(categoryMovies: self.searchActive ? self.moviesPopularSearch : self.moviesPopular)
-            return cell
-        case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: seccionTitles[1]) as! categoryTableViewCell
-            cell.setMovies(categoryMovies: self.searchActive ? self.moviesTopRatedSearch : self.moviesTopRated)
-            return cell
-        case 2:
-            let cell = tableView.dequeueReusableCell(withIdentifier: seccionTitles[2]) as! categoryTableViewCell
-            cell.setMovies(categoryMovies: self.searchActive ? self.moviesUpcomingSearch : self.moviesUpcoming)
-            return cell
-        default:
-            print("seccion not handle")
-            return UITableViewCell()
-        }
+            switch indexPath.section {
+            case 0:
+                let cell = tableView.dequeueReusableCell(withIdentifier: seccionTitles[0]) as! categoryTableViewCell
+                cell.setMovies(categoryMovies: self.searchActive ? self.moviesPopularSearch : self.moviesPopular)
+                return cell
+            case 1:
+                let cell = tableView.dequeueReusableCell(withIdentifier: seccionTitles[1]) as! categoryTableViewCell
+                cell.setMovies(categoryMovies: self.searchActive ? self.moviesTopRatedSearch : self.moviesTopRated)
+                return cell
+            case 2:
+                let cell = tableView.dequeueReusableCell(withIdentifier: seccionTitles[2]) as! categoryTableViewCell
+                cell.setMovies(categoryMovies: self.searchActive ? self.moviesUpcomingSearch : self.moviesUpcoming)
+                return cell
+            default:
+                print("seccion not handle")
+                return UITableViewCell()
+            }
         }
     }
     ///Metodo que devuelve los titulos de cada seccion dentro del tableView
@@ -189,42 +216,54 @@ extension mainViewController : UISearchControllerDelegate, UISearchBarDelegate, 
     //MARK: Search Bar
     ///Metodo que se ejecuta cuando se cancela la busqueda
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchActive = false
-        isOnlineSearch = false
-        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true) {
+            if self.isOnlineSearch || self.searchActive{
+                self.searchActive = false
+                self.isOnlineSearch = false
+                self.mainTable?.reloadData()
+            }
+        }
     }
     
     //Metodo que se ejecuta cada vez que se escribe algo en la barra de busqueda
     func updateSearchResults(for searchController: UISearchController)
     {
         if searchView.searchBar.text != ""{
-        searchActive = true
-        let searchString = searchView.searchBar.text
-        let searchURL = createUrl(type: 3, movieId: nil, searchKey: searchString)
-            print(searchURL)
-            getService(url: searchURL, httpMethod: "GET", data: JSON(), callback: { (data) in
-                if data != nil {
-                    self.isOnlineSearch = true
-                    self.moviesOnlineSearch.removeAll()
-                    for item in (data?["results"].arrayValue)!{
-                        let newMovie = GLOBAL_MODEL.findMovie(data: item)
-                        self.moviesOnlineSearch.append(newMovie)
+            searchActive = true
+            let searchString = searchView.searchBar.text
+            let searchURL = createUrl(type: 3, movieId: nil, searchKey: searchString)
+            
+            ///Verificacion de conexion a internet
+            if NetworkReachabilityManager()!.isReachable{
+                getService(url: searchURL, httpMethod: "GET", data: JSON(), callback: { (data) in
+                    if data != nil {
+                        self.isOnlineSearch = true
+                        self.moviesOnlineSearch.removeAll()
+                        for item in (data?["results"].arrayValue)!{
+                            let newMovie = GLOBAL_MODEL.findMovie(data: item)
+                            self.moviesOnlineSearch.append(newMovie)
+                        }
+                        self.mainTable?.reloadData()
+                    }else{
+                        self.isOnlineSearch = false
+                        self.moviesPopularSearch = self.moviesPopular.filter({$0.getTitle().containsIgnoringCase(searchString!)})
+                        self.moviesTopRatedSearch = self.moviesTopRated.filter({$0.getTitle().containsIgnoringCase(searchString!)})
+                        self.moviesUpcomingSearch = self.moviesUpcoming.filter({$0.getTitle().containsIgnoringCase(searchString!)})
+                        self.mainTable?.reloadData()
                     }
-                    self.mainTable?.reloadData()
-                }else{
-                    self.isOnlineSearch = false
-                    self.moviesPopularSearch = self.moviesPopular.filter({$0.getTitle().containsIgnoringCase(searchString!)})
-                    self.moviesTopRatedSearch = self.moviesTopRated.filter({$0.getTitle().containsIgnoringCase(searchString!)})
-                    self.moviesUpcomingSearch = self.moviesUpcoming.filter({$0.getTitle().containsIgnoringCase(searchString!)})
-                    //filtered = GLOBAL_MODEL.searchMovie(key: searchString!)
-                    self.mainTable?.reloadData()
-                }
-            })
+                })
+            }else{
+                self.isOnlineSearch = false
+                self.moviesPopularSearch = self.moviesPopular.filter({$0.getTitle().containsIgnoringCase(searchString!)})
+                self.moviesTopRatedSearch = self.moviesTopRated.filter({$0.getTitle().containsIgnoringCase(searchString!)})
+                self.moviesUpcomingSearch = self.moviesUpcoming.filter({$0.getTitle().containsIgnoringCase(searchString!)})
+                self.mainTable?.reloadData()
+            }
         }else{
             if searchActive == true{
-            searchActive = false
-            self.isOnlineSearch = false
-            self.mainTable?.reloadData()
+                searchActive = false
+                self.isOnlineSearch = false
+                self.mainTable?.reloadData()
             }
         }
     }
@@ -235,5 +274,26 @@ extension mainViewController : UISearchControllerDelegate, UISearchBarDelegate, 
             self.mainTable?.reloadData()
         }
         searchView.searchBar.resignFirstResponder()
+    }
+}
+
+extension mainViewController : UINavigationControllerDelegate{
+    
+    func navigationController(_ navigationController: UINavigationController, interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        guard let si = swipeInteractor else { return nil }
+        return si.transitionInProgress ? swipeInteractor : nil
+    }
+    
+    func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationControllerOperation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        switch operation {
+        case .pop:
+            guard let si = swipeInteractor else { return nil }
+            return si.transitionInProgress ? popBackAnimation() : popAnimation()
+        case .push:
+            self.swipeInteractor = swipeInteractionController(attachTo: toVC)
+            return pushAnimation()
+        case .none:
+            return nil
+        }
     }
 }

@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var initialViewController : UINavigationController?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
         UIApplication.shared.statusBarStyle = .lightContent
         let main = mainViewController()
         initialViewController  = UINavigationController(rootViewController: main)

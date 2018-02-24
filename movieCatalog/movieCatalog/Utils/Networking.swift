@@ -83,9 +83,13 @@ func getService(url: String ,httpMethod:String, data : JSON,callback: @escaping 
     }
 }
 
-/**
- Funcion para obtener las imagenes.
- */
+
+/// Funcion para obtener las imagenes de los posters de las peliculas
+///
+/// - Parameters:
+///   - newMovie: data de la pelicula
+///   - imageView: componente donde se cargara la imagen
+///   - type: 0-Poster, 1-Header
 func getPoster(newMovie : movie, imageView : UIImageView, type: Int) -> Void {
     var urlBase : String = "https://image.tmdb.org/t/p/w500"
     if type == 0 {

@@ -27,7 +27,6 @@ class detailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.getData()
-        // Do any additional setup after loading the view.
     }
 
     init(detailMovie: movie) {
@@ -40,7 +39,6 @@ class detailViewController: UIViewController {
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     //Metodo que se ejecuta cada vez que la vista va a aparecer en la pantalla

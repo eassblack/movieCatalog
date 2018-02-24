@@ -5,29 +5,39 @@ Estructura del proyecto:
 
 Grupo Controllers:el cual agrupa los diferentes controlladores de la app.
 	
-	-mainController: Controllador principal e inicial de la app. Esta conformado de un tableView con tres secciones Popular,Top_rated y Upcoming y por cada seccion un row que esta conformado por un collectionControler horizontal para la visualizacion de las diferentes peliculas. Tambien posee una barra de busqueda.
+- mainController: Controllador principal e inicial de la app. Esta conformado de un tableView con tres secciones Popular,Top_rated y Upcoming y por cada seccion un row que esta conformado por un collectionControler horizontal para la visualizacion de las diferentes peliculas. Tambien posee una barra de busqueda.
 	
-	-detailController: Controlador en el cual se puede visualizar el detalle de cada pelicula. Consta de scrollView dentrol del cual estan los diferentes componentes para visualizar la informacion(poster,titulo,descripcion,generos,fecha de lanzamiento, duracion y trailer)
+- detailController: Controlador en el cual se puede visualizar el detalle de cada pelicula. Consta de scrollView dentrol del cual estan los diferentes componentes para visualizar la informacion(poster,titulo,descripcion,generos,fecha de lanzamiento, duracion y trailer)
 
 Grupo Views: el cual agrupa las diferentes customView que se crearon para las interfaces visuales.
 	
-	-movieCollectionViewCell: Representa cada una de las peliculas dentro de los collectionView. Consta de la imagen de la pelicula.
+- movieCollectionViewCell: Representa cada una de las peliculas dentro de los collectionView. Consta de la imagen de la pelicula.
 	
-	-categoryTableViewCell: Reprenta cada uno de los row del tableView principal. Esta conformado por un collectionView para el caso de ser una busqueda de de manera vertical y cubre la pantalla. En caso de ser para una categoria es de manera horizontal y tiene una altura fija.
+- categoryTableViewCell: Reprenta cada uno de los row del tableView principal. Esta conformado por un collectionView para el caso de ser una busqueda de de manera vertical y cubre la pantalla. En caso de ser para una categoria es de manera horizontal y tiene una altura fija.
 
-Grupo Model: el cual agrupa las clase que se usan como modelo para el manejo de la data traida por el servidor.
+Grupo Model: el cual agrupa las clases que se usan como modelo para el manejo de la data traida por el servidor.
 	
-	-movie: clase que representa cada una de las movies.
+- movie: clase que representa cada una de las movies.
 	
-	-modelHandle: Clase que se encarga del manejo de las diferentes movies de las app. valida que no existan movies repitidas, Actualiza informacion de ser necesario, se pueden realizar busqueda.
+- modelHandle: Clase que se encarga del manejo de las diferentes movies de las app. valida que no existan movies repitidas, Actualiza informacion de ser necesario, se pueden realizar busqueda.
 
 Grupo Utils: agrupa las diferentes clases auxiliares donde estan variables globales y funciones que ayudan a ahorar lineas de codigo debido a su repetido uso.
 	
-	-utils:Variables globales
+- utils:Variables globales
 	
-	-Networking: metodos para realizar peticiones a la API TMDB y para descargar las diferentes imagenes.
+- Networking: metodos para realizar peticiones a la API TMDB y para descargar las diferentes imagenes.
 	
-	-extencions: metodos auxiliares que extieneden la funcionalidad de diferentes componentes. lo cual ahora repetir el mismo codigo en diferentes partes.
+- extencions: metodos auxiliares que extieneden la funcionalidad de diferentes componentes. lo cual ahora repetir el mismo codigo en diferentes partes.
+	
+Grupo Animations: agrupa las diferentes animaciones que son ejecutadas al momento de hacer push o pop.
+	
+- popAnimation: Animacion ejecutada al hacer pop desde el boton "back".
+	
+- pushAnimation: Animacion ejecutada al hacer push haciendo tap sobre alguna pelicula o serie.
+	
+- swipeInteractionController: clase encargada de configurar el gesto swipe para hacer pop.
+	
+- popBackAnimation: Animacion ejecutada al hacer pop mediante el gesto swipe.
 	
 Librerias CocoaPod usadas:
 

@@ -15,7 +15,7 @@ Grupo Views: el cual agrupa las diferentes customView que se crearon para las in
 	
 	-categoryTableViewCell: Reprenta cada uno de los row del tableView principal. Esta conformado por un collectionView para el caso de ser una busqueda de de manera vertical y cubre la pantalla. En caso de ser para una categoria es de manera horizontal y tiene una altura fija.
 
-Grupo Model: el cual agrupa las clase que se usan como modelo para el manejo de la data traida por el servidor.
+Grupo Model: el cual agrupa las clases que se usan como modelo para el manejo de la data traida por el servidor.
 	
 	-movie: clase que representa cada una de las movies.
 	
@@ -28,6 +28,16 @@ Grupo Utils: agrupa las diferentes clases auxiliares donde estan variables globa
 	-Networking: metodos para realizar peticiones a la API TMDB y para descargar las diferentes imagenes.
 	
 	-extencions: metodos auxiliares que extieneden la funcionalidad de diferentes componentes. lo cual ahora repetir el mismo codigo en diferentes partes.
+	
+Grupo Animations: agrupa las diferentes animaciones que son ejecutadas al momento de hacer push o pop.
+	
+	-popAnimation: Animacion ejecutada al hacer pop desde el boton "back".
+	
+	-pushAnimation: Animacion ejecutada al hacer push haciendo tap sobre alguna pelicula o serie.
+	
+	-swipeInteractionController: clase encargada de configurar el gesto swipe para hacer pop.
+	
+	-popBackAnimation: Animacion ejecutada al hacer pop mediante el gesto swipe.
 	
 Librerias CocoaPod usadas:
 

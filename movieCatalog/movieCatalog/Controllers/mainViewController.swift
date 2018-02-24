@@ -116,6 +116,7 @@ class mainViewController: UIViewController {
                     }
                 }
             }
+            self.mainTable?.reloadSections(IndexSet(integer: 0) , with: .none)
             downloadGroup.leave()
         }
         downloadGroup.enter()
@@ -129,6 +130,7 @@ class mainViewController: UIViewController {
                     }
                 }
             }
+            self.mainTable?.reloadSections(IndexSet(integer: 1) , with: .none)
             downloadGroup.leave()
         }
         downloadGroup.enter()
@@ -142,10 +144,10 @@ class mainViewController: UIViewController {
                     }
                 }
             }
+            self.mainTable?.reloadSections(IndexSet(integer: 2) , with: .none)
             downloadGroup.leave()
         }
         downloadGroup.notify(queue: DispatchQueue.main) {
-                self.mainTable?.reloadData()
                 self.refreshControl.endRefreshing()
         }
     }

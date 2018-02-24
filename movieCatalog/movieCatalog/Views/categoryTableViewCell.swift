@@ -10,7 +10,7 @@ import UIKit
 
 /// Vista que representa cada uno de los row dentro del tableView principal y que contienen los CollectionsViews
 class categoryTableViewCell: UITableViewCell {
-
+    
     /// Componentess
     fileprivate var moviesCollection : UICollectionView?
     fileprivate var flowLayout : UICollectionViewFlowLayout?
@@ -20,25 +20,29 @@ class categoryTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
     }
     
     ///Metodo para cambiar de un vector de movies a otro
     func setMovies(categoryMovies: [movie]){
         if self.moviesCollection == nil{
-        loadComponents()
+            loadComponents()
         }
-        self.categoryMovies = categoryMovies
-        self.moviesCollection?.reloadData()
+        
+        if !compareVectorMovies(movies1: self.categoryMovies, movies2: categoryMovies){
+            self.categoryMovies = categoryMovies
+            self.moviesCollection?.reloadData()
+        }
     }
     
     ///Metodo para cambiar de un vector de movies a otro proveniente de una busqueda online
     func setMoviesSearch(categoryMovies: [movie], Height: CGFloat){
         if self.moviesCollection == nil{
-        loadComponentsSearch(Height: Height)
+            loadComponentsSearch(Height: Height)
         }
-        self.categoryMovies = categoryMovies
-        self.moviesCollection?.reloadData()
+        if !compareVectorMovies(movies1: self.categoryMovies, movies2: categoryMovies){
+            self.categoryMovies = categoryMovies
+            self.moviesCollection?.reloadData()
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -49,12 +53,12 @@ class categoryTableViewCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
     }
-
+    
     ///Metodo que se encarga de contruir el collectionView horizontal para mostrar las movies de una  categoria
     func loadComponents(){
         self.backgroundColor = UIColor.clear

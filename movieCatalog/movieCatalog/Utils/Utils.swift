@@ -11,7 +11,7 @@ import UIKit
 import Cache
 import Imaginary
 
-///Tama;o de la pantalla en donde se esta ejecutando
+///Tamaño de la pantalla en donde se esta ejecutando
 let SCREEN_SIZE: CGRect = UIScreen.main.bounds
 
 ///manejador del modelo global
@@ -23,6 +23,13 @@ let memoryConfig = MemoryConfig(expiry: .never, countLimit: 500, totalCostLimit:
 //Cache global
 let GLOBAL_CACHE = try? Storage(diskConfig: diskConfig, memoryConfig: memoryConfig)
 
+//
+/// Funcion para comparar dos vectores de tipo movies
+///
+/// - Parameters:
+///   - movies1: vector original
+///   - movies2: vector nuevo
+/// - Returns: true-si los vectores son iguales, false-si los vectores son diferentes
 func compareVectorMovies(movies1: [movie], movies2: [movie]) -> Bool{
     var array1 = movies1
     var array2 = movies2
@@ -33,7 +40,6 @@ func compareVectorMovies(movies1: [movie], movies2: [movie]) -> Bool{
     array1.sort() { $0.id > $1.id }
     array2.sort() {$0.id > $1.id }
     
-    // get count of the matched items
     let result = zip(array1, array2).enumerated().filter() {
         $1.0.id == $1.1.id
         }.count

@@ -103,6 +103,7 @@ class movie{
 }
 
 extension movie: Equatable {
+    ///Funcion para poder comparar objetos de tipo movie
     static func == (lhs: movie, rhs: movie) -> Bool {
         return lhs.id == rhs.id
     }

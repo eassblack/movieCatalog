@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// configuracion del evento que permite hacer un pop mediante un swipe
 class swipeInteractionController: UIPercentDrivenInteractiveTransition {
     
     var navigationController : UINavigationController

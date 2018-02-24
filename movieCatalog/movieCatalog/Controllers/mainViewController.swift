@@ -9,6 +9,7 @@
 import UIKit
 import TinyConstraints
 import SwiftyJSON
+import Alamofire
 
 //Controlador principal, contiene un tableView con cada una de las categorias y sus respectivas movies. contiene la barra de busqueda.
 class mainViewController: UIViewController {
@@ -148,13 +149,13 @@ class mainViewController: UIViewController {
             downloadGroup.leave()
         }
         downloadGroup.notify(queue: DispatchQueue.main) {
-                self.refreshControl.endRefreshing()
+            self.refreshControl.endRefreshing()
         }
     }
     
     //Metodo para actualizar la vista
     @objc func refreshTable(sender:AnyObject) {
-            self.getFistData()
+        self.getFistData()
     }
     
     //Metodo para obtener la barra de busqueda
@@ -219,7 +220,7 @@ extension mainViewController : UISearchControllerDelegate, UISearchBarDelegate, 
             if self.isOnlineSearch || self.searchActive{
                 self.searchActive = false
                 self.isOnlineSearch = false
-            self.mainTable?.reloadData()
+                self.mainTable?.reloadData()
             }
         }
     }
@@ -231,24 +232,33 @@ extension mainViewController : UISearchControllerDelegate, UISearchBarDelegate, 
             searchActive = true
             let searchString = searchView.searchBar.text
             let searchURL = createUrl(type: 3, movieId: nil, searchKey: searchString)
-            print(searchURL)
-            getService(url: searchURL, httpMethod: "GET", data: JSON(), callback: { (data) in
-                if data != nil {
-                    self.isOnlineSearch = true
-                    self.moviesOnlineSearch.removeAll()
-                    for item in (data?["results"].arrayValue)!{
-                        let newMovie = GLOBAL_MODEL.findMovie(data: item)
-                        self.moviesOnlineSearch.append(newMovie)
+            
+            ///Verificacion de conexion a internet
+            if NetworkReachabilityManager()!.isReachable{
+                getService(url: searchURL, httpMethod: "GET", data: JSON(), callback: { (data) in
+                    if data != nil {
+                        self.isOnlineSearch = true
+                        self.moviesOnlineSearch.removeAll()
+                        for item in (data?["results"].arrayValue)!{
+                            let newMovie = GLOBAL_MODEL.findMovie(data: item)
+                            self.moviesOnlineSearch.append(newMovie)
+                        }
+                        self.mainTable?.reloadData()
+                    }else{
+                        self.isOnlineSearch = false
+                        self.moviesPopularSearch = self.moviesPopular.filter({$0.getTitle().containsIgnoringCase(searchString!)})
+                        self.moviesTopRatedSearch = self.moviesTopRated.filter({$0.getTitle().containsIgnoringCase(searchString!)})
+                        self.moviesUpcomingSearch = self.moviesUpcoming.filter({$0.getTitle().containsIgnoringCase(searchString!)})
+                        self.mainTable?.reloadData()
                     }
-                    self.mainTable?.reloadData()
-                }else{
-                    self.isOnlineSearch = false
-                    self.moviesPopularSearch = self.moviesPopular.filter({$0.getTitle().containsIgnoringCase(searchString!)})
-                    self.moviesTopRatedSearch = self.moviesTopRated.filter({$0.getTitle().containsIgnoringCase(searchString!)})
-                    self.moviesUpcomingSearch = self.moviesUpcoming.filter({$0.getTitle().containsIgnoringCase(searchString!)})
-                    self.mainTable?.reloadData()
-                }
-            })
+                })
+            }else{
+                self.isOnlineSearch = false
+                self.moviesPopularSearch = self.moviesPopular.filter({$0.getTitle().containsIgnoringCase(searchString!)})
+                self.moviesTopRatedSearch = self.moviesTopRated.filter({$0.getTitle().containsIgnoringCase(searchString!)})
+                self.moviesUpcomingSearch = self.moviesUpcoming.filter({$0.getTitle().containsIgnoringCase(searchString!)})
+                self.mainTable?.reloadData()
+            }
         }else{
             if searchActive == true{
                 searchActive = false

@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// Animacion que se ejecuta al momento de hacer un pop desde el boton "back"
 class popAnimation: NSObject, UIViewControllerAnimatedTransitioning {
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.25

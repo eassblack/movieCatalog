@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// Animacion que se ejecuta al momento de hacer un push dando un tap a una pelicula o serie
 class pushAnimation: NSObject, UIViewControllerAnimatedTransitioning {
     
     var operation: UINavigationControllerOperation = .push

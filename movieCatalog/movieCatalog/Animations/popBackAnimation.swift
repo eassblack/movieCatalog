@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// Animacion que se ejecuta al momento de hacer un pop haciendo un swipe desde el borde izquierdo de la pantalla
 class popBackAnimation: NSObject, UIViewControllerAnimatedTransitioning {
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.25

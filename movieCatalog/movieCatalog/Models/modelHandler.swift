@@ -13,9 +13,6 @@ class modelHandler {
     // vectores globales para el manejo de la data
     fileprivate var movies:[movie] = []
     
-    
-    //-----------------------------------------------------------------------
-    //--------------------Funciones para las movies---------------------------
     /**
      Funcion para agregar una nueva movie al vector global de movies
      
